@@ -12,6 +12,7 @@
       --border: #e0e0e0;
       --text: #333;
       --sub: #666;
+      --sidebar-w: 200px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -23,7 +24,7 @@
       min-height: 100vh;
     }
 
-    /* 헤더 */
+    /* ── 헤더 ── */
     header {
       background: var(--red);
       color: #fff;
@@ -32,6 +33,13 @@
       top: 0;
       z-index: 100;
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
     header h1 {
       font-size: 18px;
@@ -44,13 +52,70 @@
       margin-top: 2px;
     }
 
+    /* ── PC 레이아웃 컨테이너 ── */
+    .layout {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px 20px 80px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    /* ── PC 사이드바 (카테고리) ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      position: sticky;
+      top: 72px;
+    }
+    .sidebar-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--sub);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 0 4px 8px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+    .tabs {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .tab {
+      width: 100%;
+      text-align: left;
+      padding: 9px 12px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      cursor: pointer;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .tab:hover { background: var(--border); }
+    .tab.active {
+      background: var(--red);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* ── 메인 콘텐츠 ── */
+    .main {
+      flex: 1;
+      min-width: 0;
+    }
+
     /* 검색창 */
     .search-wrap {
-      padding: 16px 16px 8px;
+      margin-bottom: 16px;
     }
     .search-wrap input {
       width: 100%;
-      padding: 11px 16px;
+      padding: 12px 16px;
       border: 1.5px solid var(--border);
       border-radius: 10px;
       font-size: 15px;
@@ -62,36 +127,8 @@
       border-color: var(--red);
     }
 
-    /* 카테고리 탭 */
-    .tabs {
-      display: flex;
-      gap: 8px;
-      padding: 8px 16px 12px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .tabs::-webkit-scrollbar { display: none; }
-    .tab {
-      flex-shrink: 0;
-      padding: 6px 14px;
-      border-radius: 20px;
-      border: 1.5px solid var(--border);
-      background: #fff;
-      font-size: 13px;
-      cursor: pointer;
-      color: var(--sub);
-      transition: all 0.15s;
-    }
-    .tab.active {
-      background: var(--red);
-      border-color: var(--red);
-      color: #fff;
-      font-weight: 600;
-    }
-
     /* FAQ 리스트 */
     .faq-list {
-      padding: 0 16px 80px;
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -139,22 +176,17 @@
       color: var(--sub);
       transition: transform 0.2s;
     }
-    .faq-item.open .arrow {
-      transform: rotate(180deg);
-    }
+    .faq-item.open .arrow { transform: rotate(180deg); }
 
     .faq-answer {
       display: none;
-      padding: 0 16px 15px 16px;
+      padding: 12px 16px 15px;
       font-size: 13px;
       color: var(--sub);
       line-height: 1.7;
       border-top: 1px solid var(--border);
-      padding-top: 12px;
     }
-    .faq-item.open .faq-answer {
-      display: block;
-    }
+    .faq-item.open .faq-answer { display: block; }
 
     /* 검색 결과 없음 */
     .no-result {
@@ -185,27 +217,90 @@
       padding: 10px;
       font-size: 11px;
       color: var(--sub);
+      z-index: 50;
+    }
+
+    /* ── 모바일 (768px 이하) ── */
+    @media (max-width: 768px) {
+      .layout {
+        flex-direction: column;
+        padding: 0 0 80px;
+        gap: 0;
+      }
+
+      .sidebar {
+        width: 100%;
+        position: static;
+        padding: 8px 0 0;
+      }
+      .sidebar-title { display: none; }
+
+      .tabs {
+        flex-direction: row;
+        gap: 8px;
+        padding: 8px 16px 12px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .tabs::-webkit-scrollbar { display: none; }
+
+      .tab {
+        flex-shrink: 0;
+        width: auto;
+        padding: 6px 14px;
+        border-radius: 20px;
+        border: 1.5px solid var(--border);
+        background: #fff;
+        font-size: 13px;
+        color: var(--sub);
+      }
+      .tab:hover { background: #fff; }
+      .tab.active {
+        background: var(--red);
+        border-color: var(--red);
+        color: #fff;
+      }
+
+      .main {
+        padding: 0 16px;
+      }
+
+      .search-wrap {
+        padding-top: 4px;
+        margin-bottom: 12px;
+      }
+
+      header h1 { font-size: 16px; }
     }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>KT 스카이라이프 모바일 FAQ</h1>
-  <p>직원 및 대리점 전용 — 자주 묻는 질문</p>
+  <div class="header-inner">
+    <div>
+      <h1>KT 스카이라이프 모바일 FAQ</h1>
+      <p>직원 및 대리점 전용 — 자주 묻는 질문</p>
+    </div>
+  </div>
 </header>
 
-<div class="search-wrap">
-  <input type="text" id="searchInput" placeholder="질문 검색..." />
-</div>
+<div class="layout">
+  <!-- 사이드바 (PC: 세로 탭 / 모바일: 가로 스크롤 탭) -->
+  <aside class="sidebar">
+    <div class="sidebar-title">카테고리</div>
+    <div class="tabs" id="tabs"></div>
+  </aside>
 
-<div class="tabs" id="tabs">
-  <button class="tab active" data-cat="전체">전체</button>
-  <!-- 카테고리는 FAQ 데이터에 따라 자동 생성 -->
+  <!-- 메인 콘텐츠 -->
+  <div class="main">
+    <div class="search-wrap">
+      <input type="text" id="searchInput" placeholder="질문 검색..." />
+    </div>
+    <div class="faq-list" id="faqList"></div>
+    <div class="no-result" id="noResult">검색 결과가 없습니다.</div>
+  </div>
 </div>
-
-<div class="faq-list" id="faqList"></div>
-<div class="no-result" id="noResult">검색 결과가 없습니다.</div>
 
 <footer>Created by 박정진 &nbsp;|&nbsp; v1.0</footer>
 
