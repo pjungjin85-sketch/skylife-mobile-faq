@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>모바일 FAQ — KT 스카이라이프</title>
+  <style>
+    :root {
+      --red: #E60012;
+      --dark: #1a1a1a;
+      --gray: #f5f5f5;
+      --border: #e0e0e0;
+      --text: #333;
+      --sub: #666;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--gray);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* 헤더 */
+    header {
+      background: var(--red);
+      color: #fff;
+      padding: 16px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    header h1 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    header p {
+      font-size: 12px;
+      opacity: 0.85;
+      margin-top: 2px;
+    }
+
+    /* 검색창 */
+    .search-wrap {
+      padding: 16px 16px 8px;
+    }
+    .search-wrap input {
+      width: 100%;
+      padding: 11px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 15px;
+      outline: none;
+      background: #fff;
+      transition: border-color 0.2s;
+    }
+    .search-wrap input:focus {
+      border-color: var(--red);
+    }
+
+    /* 카테고리 탭 */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      padding: 8px 16px 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex-shrink: 0;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      color: var(--sub);
+      transition: all 0.15s;
+    }
+    .tab.active {
+      background: var(--red);
+      border-color: var(--red);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* FAQ 리스트 */
+    .faq-list {
+      padding: 0 16px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .faq-item {
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: box-shadow 0.15s;
+    }
+    .faq-item:hover {
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 15px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-question .q-badge {
+      color: var(--red);
+      font-size: 16px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .faq-question .q-text {
+      flex: 1;
+      line-height: 1.4;
+    }
+    .faq-question .arrow {
+      flex-shrink: 0;
+      font-size: 12px;
+      color: var(--sub);
+      transition: transform 0.2s;
+    }
+    .faq-item.open .arrow {
+      transform: rotate(180deg);
+    }
+
+    .faq-answer {
+      display: none;
+      padding: 0 16px 15px 16px;
+      font-size: 13px;
+      color: var(--sub);
+      line-height: 1.7;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+    }
+    .faq-item.open .faq-answer {
+      display: block;
+    }
+
+    /* 검색 결과 없음 */
+    .no-result {
+      display: none;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--sub);
+      font-size: 14px;
+    }
+
+    /* 하이라이트 */
+    mark {
+      background: #fff3cd;
+      color: inherit;
+      border-radius: 2px;
+      padding: 0 1px;
+    }
+
+    /* 푸터 */
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 10px;
+      font-size: 11px;
+      color: var(--sub);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>KT 스카이라이프 모바일 FAQ</h1>
+  <p>직원 및 대리점 전용 — 자주 묻는 질문</p>
+</header>
+
+<div class="search-wrap">
+  <input type="text" id="searchInput" placeholder="질문 검색..." />
+</div>
+
+<div class="tabs" id="tabs">
+  <button class="tab active" data-cat="전체">전체</button>
+  <!-- 카테고리는 FAQ 데이터에 따라 자동 생성 -->
+</div>
+
+<div class="faq-list" id="faqList"></div>
+<div class="no-result" id="noResult">검색 결과가 없습니다.</div>
+
+<footer>Created by 박정진 &nbsp;|&nbsp; v1.0</footer>
+
+<script>
+  // ============================================================
+  // FAQ 데이터 — 내용 추가/수정은 여기서
+  // ============================================================
+  const FAQ_DATA = [
+    {
+      category: "예시",
+      q: "여기에 질문을 입력합니다.",
+      a: "여기에 답변을 입력합니다. 내용은 추후 업데이트 예정입니다."
+    }
+  ];
+  // ============================================================
+
+  let currentCat = "전체";
+
+  function escapeHtml(str) {
+    return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  function highlight(text, keyword) {
+    if (!keyword) return escapeHtml(text);
+    const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return escapeHtml(text).replace(new RegExp(escaped, 'gi'), m => `<mark>${m}</mark>`);
+  }
+
+  function buildTabs() {
+    const cats = ["전체", ...new Set(FAQ_DATA.map(d => d.category))];
+    const tabsEl = document.getElementById("tabs");
+    tabsEl.innerHTML = cats.map(c =>
+      `<button class="tab${c === "전체" ? " active" : ""}" data-cat="${c}">${c}</button>`
+    ).join("");
+    tabsEl.querySelectorAll(".tab").forEach(btn => {
+      btn.addEventListener("click", () => {
+        currentCat = btn.dataset.cat;
+        tabsEl.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        render();
+      });
+    });
+  }
+
+  function render() {
+    const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+    const list = document.getElementById("faqList");
+    const noResult = document.getElementById("noResult");
+
+    let items = FAQ_DATA;
+    if (currentCat !== "전체") items = items.filter(d => d.category === currentCat);
+    if (keyword) items = items.filter(d =>
+      d.q.toLowerCase().includes(keyword) || d.a.toLowerCase().includes(keyword)
+    );
+
+    if (items.length === 0) {
+      list.innerHTML = "";
+      noResult.style.display = "block";
+      return;
+    }
+
+    noResult.style.display = "none";
+    list.innerHTML = items.map((d, i) => `
+      <div class="faq-item" data-idx="${i}">
+        <button class="faq-question">
+          <span class="q-badge">Q</span>
+          <span class="q-text">${highlight(d.q, keyword)}</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="faq-answer">${highlight(d.a, keyword)}</div>
+      </div>
+    `).join("");
+
+    list.querySelectorAll(".faq-item").forEach(item => {
+      item.querySelector(".faq-question").addEventListener("click", () => {
+        item.classList.toggle("open");
+      });
+    });
+  }
+
+  document.getElementById("searchInput").addEventListener("input", render);
+
+  buildTabs();
+  render();
+</script>
+</body>
+</html>
