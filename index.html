@@ -553,12 +553,13 @@
     searchWrap.style.display = "";
     fraudSection.classList.remove("active");
 
-    const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+    const keyword = document.getElementById("searchInput").value.trim().toLowerCase().replace(/\s+/g, '');
 
     let items = FAQ_DATA;
+    const norm = s => s.toLowerCase().replace(/\s+/g, '');
     if (currentCat !== "전체") items = items.filter(d => d.category === currentCat);
     if (keyword) items = items.filter(d =>
-      d.q.toLowerCase().includes(keyword) || d.a.toLowerCase().includes(keyword)
+      norm(d.q).includes(keyword) || norm(d.a).includes(keyword)
     );
 
     if (items.length === 0) {
