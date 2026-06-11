@@ -471,8 +471,13 @@
 
   function highlight(text, keyword) {
     if (!keyword) return escapeHtml(text);
-    const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    return escapeHtml(text).replace(new RegExp(escaped, 'gi'), m => `<mark>${m}</mark>`);
+    const re = new RegExp(keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+    let result = '', lastIdx = 0, m;
+    while ((m = re.exec(text)) !== null) {
+      result += escapeHtml(text.slice(lastIdx, m.index)) + '<mark>' + escapeHtml(m[0]) + '</mark>';
+      lastIdx = re.lastIndex;
+    }
+    return result + escapeHtml(text.slice(lastIdx));
   }
 
   function buildTabs() {
