@@ -479,9 +479,9 @@
     const cats = ["전체", ...new Set(FAQ_DATA.map(d => d.category))];
     const tabsEl = document.getElementById("tabs");
     const faqTabsHtml = cats.map(c =>
-      `<button class="tab${c === "전체" ? " active" : ""}" data-cat="${c}">${c}</button>`
+      `<button type="button" class="tab${c === "전체" ? " active" : ""}" data-cat="${c}">${c}</button>`
     ).join("");
-    const fraudTabHtml = `<button class="tab fraud-tab" data-cat="${FRAUD_CAT}">부정가입방지</button>`;
+    const fraudTabHtml = `<button type="button" class="tab fraud-tab" data-cat="${FRAUD_CAT}">부정가입방지</button>`;
     tabsEl.innerHTML = faqTabsHtml + fraudTabHtml;
 
     tabsEl.querySelectorAll(".tab").forEach(btn => {
@@ -544,7 +544,7 @@
     noResult.style.display = "none";
     faqList.innerHTML = items.map((d, i) => `
       <div class="faq-item" data-idx="${i}">
-        <button class="faq-question">
+        <button type="button" class="faq-question">
           <span class="q-badge">Q</span>
           <span class="q-text">${highlight(d.q, keyword)}</span>
           <span class="arrow">▼</span>
@@ -567,8 +567,8 @@
       const res = await fetch('data/faq.json?t=' + Date.now());
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      FAQ_DATA = data.FAQ_DATA;
-      FRAUD_DATA = data.FRAUD_DATA;
+      FAQ_DATA = Array.isArray(data.FAQ_DATA) ? data.FAQ_DATA : [];
+      FRAUD_DATA = Array.isArray(data.FRAUD_DATA) ? data.FRAUD_DATA : [];
       buildTabs();
       buildFraudList();
       render();
