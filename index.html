@@ -609,7 +609,9 @@
 
     faqList.querySelectorAll(".faq-item").forEach(item => {
       item.querySelector(".faq-question").addEventListener("click", () => {
+        const wasOpen = item.classList.contains("open");
         item.classList.toggle("open");
+        if (!wasOpen) recordFaqClick(item.querySelector(".q-text").textContent.trim());
       });
     });
   }
@@ -622,7 +624,7 @@
   // ── 인기 검색어 추적 ────────────────────────────────────────────────────
   const SYNONYMS_DEF = {
     '개통':        ['신규가입', '개통방법', '개통시간', '가입방법', '개통가능'],
-    '번호이동':    ['번이', '번호이동방법', '번호이동절차'],
+    '번호이동':    ['번이', '번호이동방법', '번호이동절차', '번호이동시'],
     '해지':        ['취소', '해약', '개통취소', '해지방법'],
     '유심':        ['usim', 'sim', '심카드', '유심교체', '유심변경', '유심불량', '유심재사용'],
     'esim':        ['이심', '듀얼유심', '듀얼심', '이심개통'],
@@ -671,6 +673,16 @@
     }, 800);
   }
 
+  function recordFaqClick(title) {
+    // 제목 첫 단어로 정규화 시도, 매핑 없으면 그대로 사용
+    const firstWord = title.split(/[\s\-\/\(]+/)[0].toLowerCase();
+    const key = SYNONYM_MAP[firstWord] || normalizeKeyword(firstWord) || firstWord;
+    const stats = loadStats();
+    stats[key] = (stats[key] || 0) + 1;
+    saveStats(stats);
+    renderRankingPanel();
+  }
+
   function renderRankingPanel() {
     const panel = document.getElementById('rankingPanel');
     const stats = loadStats();
@@ -680,7 +692,7 @@
 
     let inner = `<div class="rp-header"><h3>인기 검색어 TOP 10</h3><button class="rp-reset" onclick="resetStats()">초기화</button></div>`;
     if (sorted.length === 0) {
-      inner += `<div class="rp-empty">아직 검색 기록이 없습니다.<br>검색창에서 키워드를<br>입력하면 누적됩니다.</div>`;
+      inner += `<div class="rp-empty">아직 기록이 없습니다.<br>검색하거나 FAQ를<br>열면 누적됩니다.</div>`;
     } else {
       const max = sorted[0][1];
       inner += `<div class="rank-list">${sorted.map(([kw, cnt], i) => {
