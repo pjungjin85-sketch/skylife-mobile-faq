@@ -249,6 +249,50 @@
       padding: 0 1px;
     }
 
+    /* ── 인기 검색어 패널 ── */
+    .search-row { display: flex; gap: 8px; align-items: center; }
+    .search-row input { flex: 1; min-width: 0; }
+    .rank-btn {
+      flex-shrink: 0; padding: 0 14px; height: 44px;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      background: #fff; font-size: 13px; font-weight: 600;
+      color: var(--mid); cursor: pointer; white-space: nowrap;
+      transition: all 0.15s; font-family: inherit;
+    }
+    .rank-btn:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
+    .rank-btn.active { border-color: var(--red); color: var(--red); background: var(--red-light); }
+    .ranking-panel {
+      margin-top: 10px; background: #fff;
+      border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden;
+    }
+    .rp-header {
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .rp-header h3 { font-size: 13px; font-weight: 700; color: var(--dark); }
+    .rp-reset { font-size: 11px; color: var(--light); background: none; border: none; cursor: pointer; font-family: inherit; padding: 0; }
+    .rp-reset:hover { color: var(--red); }
+    .rank-list { padding: 6px 0; }
+    .rank-item { display: flex; align-items: center; gap: 10px; padding: 7px 16px; }
+    .rank-num { width: 22px; font-size: 12px; font-weight: 700; color: var(--light); text-align: center; flex-shrink: 0; line-height: 1; }
+    .rank-num.top1 { font-size: 16px; }
+    .rank-num.top2 { font-size: 15px; }
+    .rank-num.top3 { font-size: 14px; }
+    .rank-kw {
+      font-size: 13px; font-weight: 600; color: var(--dark);
+      width: 76px; flex-shrink: 0; cursor: pointer;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .rank-kw:hover { color: var(--red); text-decoration: underline; }
+    .rank-bar-wrap { flex: 1; background: var(--bg2); border-radius: 4px; height: 7px; overflow: hidden; }
+    .rank-bar { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+    .rank-bar.top1 { background: #F59E0B; }
+    .rank-bar.top2 { background: #9CA3AF; }
+    .rank-bar.top3 { background: #B45309; }
+    .rank-bar.other { background: var(--red); opacity: 0.55; }
+    .rank-cnt { font-size: 11px; color: var(--light); width: 30px; text-align: right; flex-shrink: 0; }
+    .rp-empty { padding: 28px 16px; text-align: center; font-size: 13px; color: var(--light); }
+
     /* ── 부정가입방지 섹션 ── */
     .fraud-section { display: none; }
     .fraud-section.active { display: block; }
@@ -432,7 +476,11 @@
   <!-- 메인 콘텐츠 -->
   <div class="main">
     <div class="search-wrap" id="searchWrap">
-      <input type="text" id="searchInput" placeholder="질문 검색..." />
+      <div class="search-row">
+        <input type="text" id="searchInput" placeholder="질문 검색..." />
+        <button type="button" class="rank-btn" id="rankToggle">📊 TOP 10</button>
+      </div>
+      <div class="ranking-panel" id="rankingPanel" style="display:none"></div>
     </div>
     <div class="faq-list" id="faqList"></div>
     <div class="no-result" id="noResult">검색 결과가 없습니다.</div>
@@ -565,7 +613,112 @@
     });
   }
 
-  document.getElementById("searchInput").addEventListener("input", render);
+  document.getElementById("searchInput").addEventListener("input", () => {
+    render();
+    recordSearch(document.getElementById("searchInput").value.trim());
+  });
+
+  // ── 인기 검색어 추적 ────────────────────────────────────────────────────
+  const SYNONYMS_DEF = {
+    '개통':        ['신규가입', '개통방법', '개통시간', '가입방법', '개통가능'],
+    '번호이동':    ['번이', '번호이동방법', '번호이동절차'],
+    '해지':        ['취소', '해약', '개통취소', '해지방법'],
+    '유심':        ['usim', 'sim', '심카드', '유심교체', '유심변경', '유심불량', '유심재사용'],
+    'esim':        ['이심', '듀얼유심', '듀얼심', '이심개통'],
+    '요금제':      ['요금', '플랜', '요금변경', '요금제변경', '데이터요금제'],
+    '데이터쉐어링':['쉐어링', '데이터공유', '데이터셰어링'],
+    '테더링':      ['핫스팟'],
+    '로밍':        ['해외로밍', '국제로밍', '해외사용', '해외'],
+    '외국인':      ['외국인가입', '외국인개통', '외국인등록증', '외국'],
+    '미납':        ['연체', '미납금', '체납', '미납금액'],
+    '서류':        ['신분증', '필요서류', '가족관계증명서'],
+    '실명인증':    ['실명인증실패', '인증실패', '실명오류', '인증오류'],
+    '미성년자':    ['청소년', '미성년', '자녀가입'],
+    '고객센터':    ['연락처', '전화번호', '콜센터', '문의전화'],
+    '결합':        ['결합할인', '가족결합', '모바일결합'],
+    '부정가입방지':['부정가입', '부정', '가입제한', '가입차단'],
+    '통화품질':    ['통화불량', '품질미약', '수신불량', '통화약'],
+    '나밍오류':    ['유심인식', '단말기인식', '인식안됨', '나밍'],
+  };
+
+  const SYNONYM_MAP = {};
+  Object.entries(SYNONYMS_DEF).forEach(([canonical, list]) => {
+    SYNONYM_MAP[canonical] = canonical;
+    list.forEach(s => { SYNONYM_MAP[s.replace(/\s+/g, '').toLowerCase()] = canonical; });
+  });
+
+  function normalizeKeyword(kw) {
+    const clean = kw.toLowerCase().replace(/\s+/g, '');
+    return SYNONYM_MAP[clean] || clean;
+  }
+
+  function loadStats() {
+    try { return JSON.parse(localStorage.getItem('faq_search_stats') || '{}'); } catch { return {}; }
+  }
+  function saveStats(s) { localStorage.setItem('faq_search_stats', JSON.stringify(s)); }
+
+  let _rankTimer = null;
+  function recordSearch(kw) {
+    if (!kw || kw.length < 2) return;
+    clearTimeout(_rankTimer);
+    _rankTimer = setTimeout(() => {
+      const key = normalizeKeyword(kw);
+      const stats = loadStats();
+      stats[key] = (stats[key] || 0) + 1;
+      saveStats(stats);
+      if (document.getElementById('rankingPanel').style.display !== 'none') renderRankingPanel();
+    }, 800);
+  }
+
+  function renderRankingPanel() {
+    const panel = document.getElementById('rankingPanel');
+    const stats = loadStats();
+    const sorted = Object.entries(stats).sort((a, b) => b[1] - a[1]).slice(0, 10);
+    const MEDALS = ['🥇', '🥈', '🥉'];
+    const RANK_CLS = ['top1', 'top2', 'top3'];
+
+    let inner = `<div class="rp-header"><h3>인기 검색어 TOP 10</h3><button class="rp-reset" onclick="resetStats()">초기화</button></div>`;
+    if (sorted.length === 0) {
+      inner += `<div class="rp-empty">검색 기록이 아직 없습니다.<br>검색창에서 키워드를 입력하면 누적됩니다.</div>`;
+    } else {
+      const max = sorted[0][1];
+      inner += `<div class="rank-list">${sorted.map(([kw, cnt], i) => {
+        const cls = i < 3 ? RANK_CLS[i] : 'other';
+        const num = i < 3 ? MEDALS[i] : (i + 1);
+        const pct = Math.round(cnt / max * 100);
+        return `<div class="rank-item">
+          <div class="rank-num ${i < 3 ? RANK_CLS[i] : ''}">${num}</div>
+          <div class="rank-kw" data-kw="${escapeHtml(kw)}" onclick="searchByRank(this.dataset.kw)">${escapeHtml(kw)}</div>
+          <div class="rank-bar-wrap"><div class="rank-bar ${cls}" style="width:0%" data-pct="${pct}"></div></div>
+          <div class="rank-cnt">${cnt}회</div>
+        </div>`;
+      }).join('')}</div>`;
+    }
+    panel.innerHTML = inner;
+    requestAnimationFrame(() => {
+      panel.querySelectorAll('.rank-bar').forEach(bar => { bar.style.width = bar.dataset.pct + '%'; });
+    });
+  }
+
+  function resetStats() {
+    if (confirm('검색 기록을 초기화할까요?')) { localStorage.removeItem('faq_search_stats'); renderRankingPanel(); }
+  }
+  function searchByRank(kw) {
+    const input = document.getElementById('searchInput');
+    input.value = kw;
+    document.getElementById('rankingPanel').style.display = 'none';
+    document.getElementById('rankToggle').classList.remove('active');
+    render();
+  }
+
+  document.getElementById('rankToggle').addEventListener('click', () => {
+    const panel = document.getElementById('rankingPanel');
+    const isOpen = panel.style.display !== 'none';
+    panel.style.display = isOpen ? 'none' : 'block';
+    document.getElementById('rankToggle').classList.toggle('active', !isOpen);
+    if (!isOpen) renderRankingPanel();
+  });
+  // ────────────────────────────────────────────────────────────────────────
 
   async function loadData() {
     try {
