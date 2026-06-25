@@ -249,49 +249,46 @@
       padding: 0 1px;
     }
 
-    /* ── 인기 검색어 패널 ── */
-    .search-row { display: flex; gap: 8px; align-items: center; }
-    .search-row input { flex: 1; min-width: 0; }
-    .rank-btn {
-      flex-shrink: 0; padding: 0 14px; height: 44px;
-      border: 1.5px solid var(--border); border-radius: 10px;
-      background: #fff; font-size: 13px; font-weight: 600;
-      color: var(--mid); cursor: pointer; white-space: nowrap;
-      transition: all 0.15s; font-family: inherit;
-    }
-    .rank-btn:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
-    .rank-btn.active { border-color: var(--red); color: var(--red); background: var(--red-light); }
-    .ranking-panel {
-      margin-top: 10px; background: #fff;
-      border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden;
+    /* ── 인기 검색어 사이드 차트 ── */
+    .ranking-aside {
+      width: 195px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 68px;
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
     }
     .rp-header {
-      padding: 12px 16px; border-bottom: 1px solid var(--border);
+      padding: 11px 13px 9px;
+      border-bottom: 1px solid var(--border);
       display: flex; justify-content: space-between; align-items: center;
     }
-    .rp-header h3 { font-size: 13px; font-weight: 700; color: var(--dark); }
-    .rp-reset { font-size: 11px; color: var(--light); background: none; border: none; cursor: pointer; font-family: inherit; padding: 0; }
+    .rp-header h3 { font-size: 12px; font-weight: 700; color: var(--dark); }
+    .rp-reset { font-size: 10px; color: var(--light); background: none; border: none; cursor: pointer; font-family: inherit; padding: 0; }
     .rp-reset:hover { color: var(--red); }
-    .rank-list { padding: 6px 0; }
-    .rank-item { display: flex; align-items: center; gap: 10px; padding: 7px 16px; }
-    .rank-num { width: 22px; font-size: 12px; font-weight: 700; color: var(--light); text-align: center; flex-shrink: 0; line-height: 1; }
-    .rank-num.top1 { font-size: 16px; }
-    .rank-num.top2 { font-size: 15px; }
-    .rank-num.top3 { font-size: 14px; }
+    .rank-list { padding: 4px 0 6px; }
+    .rank-item { padding: 5px 12px 0; }
+    .rank-top { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+    .rank-num { width: 18px; font-size: 11px; font-weight: 700; color: var(--light); text-align: center; flex-shrink: 0; line-height: 1; }
+    .rank-num.top1 { font-size: 15px; }
+    .rank-num.top2 { font-size: 14px; }
+    .rank-num.top3 { font-size: 13px; }
     .rank-kw {
-      font-size: 13px; font-weight: 600; color: var(--dark);
-      width: 76px; flex-shrink: 0; cursor: pointer;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      flex: 1; min-width: 0;
+      font-size: 12px; font-weight: 600; color: var(--dark);
+      cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .rank-kw:hover { color: var(--red); text-decoration: underline; }
-    .rank-bar-wrap { flex: 1; background: var(--bg2); border-radius: 4px; height: 7px; overflow: hidden; }
-    .rank-bar { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+    .rank-cnt { font-size: 10px; color: var(--light); flex-shrink: 0; }
+    .rank-bar-wrap { height: 4px; background: var(--bg2); border-radius: 2px; margin-bottom: 5px; overflow: hidden; }
+    .rank-bar { height: 100%; border-radius: 2px; transition: width 0.55s ease; }
     .rank-bar.top1 { background: #F59E0B; }
     .rank-bar.top2 { background: #9CA3AF; }
     .rank-bar.top3 { background: #B45309; }
-    .rank-bar.other { background: var(--red); opacity: 0.55; }
-    .rank-cnt { font-size: 11px; color: var(--light); width: 30px; text-align: right; flex-shrink: 0; }
-    .rp-empty { padding: 28px 16px; text-align: center; font-size: 13px; color: var(--light); }
+    .rank-bar.other { background: var(--red); opacity: 0.5; }
+    .rp-empty { padding: 22px 13px; text-align: center; font-size: 11px; color: var(--light); line-height: 1.7; }
 
     /* ── 부정가입방지 섹션 ── */
     .fraud-section { display: none; }
@@ -376,6 +373,11 @@
       font-size: 11px;
       color: var(--sub);
       z-index: 50;
+    }
+
+    /* ── 중간 화면: 랭킹 패널 숨김 ── */
+    @media (max-width: 900px) {
+      .ranking-aside { display: none; }
     }
 
     /* ── 모바일 (768px 이하) ── */
@@ -476,11 +478,7 @@
   <!-- 메인 콘텐츠 -->
   <div class="main">
     <div class="search-wrap" id="searchWrap">
-      <div class="search-row">
-        <input type="text" id="searchInput" placeholder="질문 검색..." />
-        <button type="button" class="rank-btn" id="rankToggle">📊 TOP 10</button>
-      </div>
-      <div class="ranking-panel" id="rankingPanel" style="display:none"></div>
+      <input type="text" id="searchInput" placeholder="질문 검색..." />
     </div>
     <div class="faq-list" id="faqList"></div>
     <div class="no-result" id="noResult">검색 결과가 없습니다.</div>
@@ -494,6 +492,9 @@
       <div class="fraud-list" id="fraudList"></div>
     </div>
   </div>
+
+  <!-- 인기 검색어 차트 -->
+  <aside class="ranking-aside" id="rankingPanel"></aside>
 </div>
 
 <footer>Created by 박정진 &nbsp;|&nbsp; 모바일 FAQ</footer>
@@ -666,7 +667,7 @@
       const stats = loadStats();
       stats[key] = (stats[key] || 0) + 1;
       saveStats(stats);
-      if (document.getElementById('rankingPanel').style.display !== 'none') renderRankingPanel();
+      renderRankingPanel();
     }, 800);
   }
 
@@ -679,7 +680,7 @@
 
     let inner = `<div class="rp-header"><h3>인기 검색어 TOP 10</h3><button class="rp-reset" onclick="resetStats()">초기화</button></div>`;
     if (sorted.length === 0) {
-      inner += `<div class="rp-empty">검색 기록이 아직 없습니다.<br>검색창에서 키워드를 입력하면 누적됩니다.</div>`;
+      inner += `<div class="rp-empty">아직 검색 기록이 없습니다.<br>검색창에서 키워드를<br>입력하면 누적됩니다.</div>`;
     } else {
       const max = sorted[0][1];
       inner += `<div class="rank-list">${sorted.map(([kw, cnt], i) => {
@@ -687,10 +688,12 @@
         const num = i < 3 ? MEDALS[i] : (i + 1);
         const pct = Math.round(cnt / max * 100);
         return `<div class="rank-item">
-          <div class="rank-num ${i < 3 ? RANK_CLS[i] : ''}">${num}</div>
-          <div class="rank-kw" data-kw="${escapeHtml(kw)}" onclick="searchByRank(this.dataset.kw)">${escapeHtml(kw)}</div>
+          <div class="rank-top">
+            <div class="rank-num ${i < 3 ? RANK_CLS[i] : ''}">${num}</div>
+            <div class="rank-kw" data-kw="${escapeHtml(kw)}" onclick="searchByRank(this.dataset.kw)">${escapeHtml(kw)}</div>
+            <div class="rank-cnt">${cnt}회</div>
+          </div>
           <div class="rank-bar-wrap"><div class="rank-bar ${cls}" style="width:0%" data-pct="${pct}"></div></div>
-          <div class="rank-cnt">${cnt}회</div>
         </div>`;
       }).join('')}</div>`;
     }
@@ -706,18 +709,8 @@
   function searchByRank(kw) {
     const input = document.getElementById('searchInput');
     input.value = kw;
-    document.getElementById('rankingPanel').style.display = 'none';
-    document.getElementById('rankToggle').classList.remove('active');
     render();
   }
-
-  document.getElementById('rankToggle').addEventListener('click', () => {
-    const panel = document.getElementById('rankingPanel');
-    const isOpen = panel.style.display !== 'none';
-    panel.style.display = isOpen ? 'none' : 'block';
-    document.getElementById('rankToggle').classList.toggle('active', !isOpen);
-    if (!isOpen) renderRankingPanel();
-  });
   // ────────────────────────────────────────────────────────────────────────
 
   async function loadData() {
@@ -730,6 +723,7 @@
       buildTabs();
       buildFraudList();
       render();
+      renderRankingPanel();
     } catch (err) {
       document.getElementById('faqList').innerHTML = `
         <div style="text-align:center;padding:60px 20px;">
