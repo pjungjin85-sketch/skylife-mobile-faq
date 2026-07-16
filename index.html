@@ -10,6 +10,7 @@
   <meta http-equiv="Expires" content="0">
   <title>모바일 FAQ — kt skylife</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js" integrity="sha384-0w2KAL2YHP6wKOkUDzkCDGgVvfmHnj02DHeQ6XcHOgTfFsGyonKOpShMH1x6nk9o" crossorigin="anonymous"></script>
   <style>
     :root {
       --red: #E60012;
@@ -459,6 +460,103 @@
   </style>
 </head>
 <body>
+<div id="lock-overlay">
+  <div class="lock-box">
+    <div class="lock-logo">kt <span>skylife</span></div>
+    <div class="lock-sub">로그인이 필요한 페이지입니다</div>
+    <form id="login-form" onsubmit="return handleLogin(event)">
+      <div class="auth-field"><label>아이디</label><input type="text" id="login-username" autocomplete="username" required></div>
+      <div class="auth-field"><label>비밀번호</label><input type="password" id="login-password" autocomplete="current-password" required></div>
+      <button type="submit" class="auth-submit-btn" id="login-btn">로그인</button>
+      <div class="auth-msg" id="login-msg"></div>
+    </form>
+    <div class="lock-hint">계정이 없으신가요? 현장영업 안내 허브에서 가입해주세요.</div>
+  </div>
+</div>
+<style>
+#lock-overlay{position:fixed;inset:0;z-index:9999;background:var(--bg2);display:flex;align-items:center;justify-content:center;padding:20px;}
+#lock-overlay.hidden{display:none;}
+.lock-box{background:var(--bg);border:1px solid var(--border);border-top:3px solid var(--red);border-radius:16px;padding:40px 36px 32px;width:100%;max-width:380px;box-shadow:var(--shadow);text-align:center;}
+.lock-logo{font-size:20px;font-weight:900;color:var(--black);margin-bottom:4px;}
+.lock-logo span{color:var(--red);}
+.lock-sub{font-size:12px;color:var(--light);margin-bottom:24px;line-height:1.5;}
+#login-form{display:flex;flex-direction:column;gap:10px;text-align:left;}
+.auth-field label{font-size:11px;font-weight:700;color:var(--dark);margin-bottom:4px;display:block;}
+.auth-field input{width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;outline:none;color:var(--black);transition:border-color .15s;}
+.auth-field input:focus{border-color:var(--red);}
+.auth-submit-btn{width:100%;padding:13px;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer;margin-top:4px;transition:background .15s;}
+.auth-submit-btn:hover{background:var(--red2);}
+.auth-submit-btn:disabled{background:var(--light);cursor:not-allowed;}
+.auth-msg{font-size:12px;margin-top:6px;min-height:16px;text-align:center;}
+.auth-msg.error{color:var(--red);}
+.lock-hint{font-size:11px;color:var(--light);margin-top:18px;line-height:1.5;}
+</style>
+<script>
+(function(){
+  var SUPABASE_URL = 'https://qvzlwhwxspmofrwdvgdd.supabase.co';
+  var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2emx3aHd4c3Btb2Zyd2R2Z2RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNzcyNDQsImV4cCI6MjA5OTc1MzI0NH0.uMdamJNn-GHRGfcTNnij6gapaG49bnXjC2fk32RcTfg';
+  var createClient = supabase.createClient;
+  var sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+  var AUTH_EMAIL_DOMAIN = '@skylife-agent.local';
+  var USERNAME_RE = /^[a-zA-Z0-9_-]{4,20}$/;
+  var SESSION_FLAG = 'skylife_sso_ok';
+
+  function unlock(){
+    document.getElementById('lock-overlay').classList.add('hidden');
+    sessionStorage.setItem(SESSION_FLAG, '1');
+  }
+  function setMsg(type, text){
+    var el = document.getElementById('login-msg');
+    el.className = 'auth-msg' + (type ? ' ' + type : '');
+    el.textContent = text;
+  }
+
+  async function checkApprovedAndUnlock(userId, client, isRealSession){
+    var res = await client.from('profiles').select('status').eq('id', userId).single();
+    var profile = res.data, error = res.error;
+    if(error || !profile || profile.status !== 'approved'){
+      if(isRealSession) await sb.auth.signOut();
+      setMsg('error', profile && profile.status === 'pending' ? '관리자 승인 대기 중입니다' : '접근 권한이 없습니다');
+      return false;
+    }
+    unlock();
+    return true;
+  }
+
+  window.handleLogin = async function(e){
+    e.preventDefault();
+    var username = document.getElementById('login-username').value.trim();
+    var password = document.getElementById('login-password').value;
+    if(!USERNAME_RE.test(username)){ setMsg('error','아이디 형식이 올바르지 않습니다'); return false; }
+    var btn = document.getElementById('login-btn');
+    btn.disabled = true; btn.textContent = '로그인 중...';
+    var res = await sb.auth.signInWithPassword({ email: username.toLowerCase() + AUTH_EMAIL_DOMAIN, password: password });
+    btn.disabled = false; btn.textContent = '로그인';
+    if(res.error){ setMsg('error','아이디 또는 비밀번호가 올바르지 않습니다'); return false; }
+    await checkApprovedAndUnlock(res.data.session.user.id, sb, true);
+    return false;
+  };
+
+  async function init(){
+    if(sessionStorage.getItem(SESSION_FLAG) === '1'){
+      document.getElementById('lock-overlay').classList.add('hidden');
+      return;
+    }
+    var hash = location.hash;
+    if(hash && hash.indexOf('sso=') !== -1){
+      var token = decodeURIComponent(hash.split('sso=')[1].split('&')[0]);
+      history.replaceState(null, '', location.pathname + location.search);
+      var tokenClient = createClient(SUPABASE_URL, SUPABASE_KEY, { global: { headers: { Authorization: 'Bearer ' + token } } });
+      var userRes = await tokenClient.auth.getUser(token);
+      if(!userRes.error && userRes.data.user){
+        await checkApprovedAndUnlock(userRes.data.user.id, tokenClient, false);
+      }
+    }
+  }
+  window.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+
 
 <header>
   <div class="header-inner">
