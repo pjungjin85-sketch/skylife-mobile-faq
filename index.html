@@ -529,7 +529,7 @@
     if(error || !profile || profile.status !== 'approved'){
       if(isRealSession) await sb.auth.signOut();
       showLoginForm();
-      setMsg('error', profile && profile.status === 'pending' ? '관리자 승인 대기 중입니다' : '접근 권한이 없습니다');
+      setMsg('error', profile && profile.status === 'pending' ? '관리자 승인 대기 중입니다' : profile && profile.status === 'rejected' ? '이용이 제한된 계정입니다' : '접근 권한이 없습니다');
       return false;
     }
     unlock();
