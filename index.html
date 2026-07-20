@@ -464,13 +464,16 @@
   <div class="lock-box">
     <div class="lock-logo">kt <span>skylife</span></div>
     <div class="lock-sub">로그인이 필요한 페이지입니다</div>
-    <form id="login-form" onsubmit="return handleLogin(event)">
-      <div class="auth-field"><label>아이디</label><input type="text" id="login-username" autocomplete="username" required></div>
-      <div class="auth-field"><label>비밀번호</label><input type="password" id="login-password" autocomplete="current-password" required></div>
-      <button type="submit" class="auth-submit-btn" id="login-btn">로그인</button>
-      <div class="auth-msg" id="login-msg"></div>
-    </form>
-    <div class="lock-hint">계정이 없으신가요? 현장영업 안내 허브에서 가입해주세요.</div>
+    <div id="lock-loading" class="lock-loading"><span class="spinner"></span></div>
+    <div id="login-area" class="login-area">
+      <form id="login-form" onsubmit="return handleLogin(event)">
+        <div class="auth-field"><label>아이디</label><input type="text" id="login-username" autocomplete="username" required></div>
+        <div class="auth-field"><label>비밀번호</label><input type="password" id="login-password" autocomplete="current-password" required></div>
+        <button type="submit" class="auth-submit-btn" id="login-btn">로그인</button>
+        <div class="auth-msg" id="login-msg"></div>
+      </form>
+      <div class="lock-hint">계정이 없으신가요? 현장영업 안내 허브에서 가입해주세요.</div>
+    </div>
   </div>
 </div>
 <style>
@@ -480,6 +483,11 @@
 .lock-logo{font-size:20px;font-weight:900;color:var(--black);margin-bottom:4px;}
 .lock-logo span{color:var(--red);}
 .lock-sub{font-size:12px;color:var(--light);margin-bottom:24px;line-height:1.5;}
+.lock-loading{display:flex;justify-content:center;padding:24px 0;}
+.spinner{width:26px;height:26px;border:3px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:lock-spin .7s linear infinite;}
+@keyframes lock-spin{to{transform:rotate(360deg);}}
+.login-area{display:none;}
+.login-area.show{display:block;}
 #login-form{display:flex;flex-direction:column;gap:10px;text-align:left;}
 .auth-field label{font-size:11px;font-weight:700;color:var(--dark);margin-bottom:4px;display:block;}
 .auth-field input{width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;outline:none;color:var(--black);transition:border-color .15s;}
@@ -505,6 +513,10 @@
     document.getElementById('lock-overlay').classList.add('hidden');
     sessionStorage.setItem(SESSION_FLAG, '1');
   }
+  function showLoginForm(){
+    document.getElementById('lock-loading').style.display = 'none';
+    document.getElementById('login-area').classList.add('show');
+  }
   function setMsg(type, text){
     var el = document.getElementById('login-msg');
     el.className = 'auth-msg' + (type ? ' ' + type : '');
@@ -516,6 +528,7 @@
     var profile = res.data, error = res.error;
     if(error || !profile || profile.status !== 'approved'){
       if(isRealSession) await sb.auth.signOut();
+      showLoginForm();
       setMsg('error', profile && profile.status === 'pending' ? '관리자 승인 대기 중입니다' : '접근 권한이 없습니다');
       return false;
     }
@@ -550,7 +563,11 @@
       var userRes = await tokenClient.auth.getUser(token);
       if(!userRes.error && userRes.data.user){
         await checkApprovedAndUnlock(userRes.data.user.id, tokenClient, false);
+      } else {
+        showLoginForm();
       }
+    } else {
+      showLoginForm();
     }
   }
   window.addEventListener('DOMContentLoaded', init);
