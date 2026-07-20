@@ -505,7 +505,7 @@
   var SUPABASE_URL = 'https://qvzlwhwxspmofrwdvgdd.supabase.co';
   var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2emx3aHd4c3Btb2Zyd2R2Z2RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNzcyNDQsImV4cCI6MjA5OTc1MzI0NH0.uMdamJNn-GHRGfcTNnij6gapaG49bnXjC2fk32RcTfg';
   var createClient = supabase.createClient;
-  var sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+  var sb = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { storage: window.sessionStorage } });
   var AUTH_EMAIL_DOMAIN = '@skylife-agent.local';
   var USERNAME_RE = /^[a-zA-Z0-9_-]{4,20}$/;
   var SESSION_FLAG = 'skylife_sso_ok';
