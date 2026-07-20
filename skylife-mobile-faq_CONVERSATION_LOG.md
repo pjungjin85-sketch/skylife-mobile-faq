@@ -49,3 +49,11 @@
 - 로그인 게이트(`profiles.status` 조회)가 참조하던 기존 Supabase 프로젝트가 90일 초과 일시정지로 복구 불가 확인 → 신규 프로젝트 `skylife-shared`(ref `qvzlwhwxspmofrwdvgdd`)로 URL/KEY 교체
 - 상세 배경은 skylife-inquiry의 `skylife-inquiry_CONVERSATION_LOG.md` 참고 (워크스페이스 6개 사이트 공용 이슈였음)
 - 이 커밋에는 이미 작업 중이던 로그인월(lock-overlay) 기능도 미커밋 상태로 함께 포함되어 같이 push/배포됨
+
+---
+
+## 2026-07-20 업데이트 — favicon 통일 (워크스페이스 6개 사이트 공용)
+- 브라우저 탭에서 skylife-guide/TPS는 kt skylife 로고 favicon이 보이는데, 나머지 6개 사이트(skylife-plans, skylife-addons, skylife-commission-calculator, skylife-mobile-faq, mobile-manual, skylife-inquiry)는 favicon 링크 태그 자체가 없어 브라우저 기본(Vercel "V") 아이콘이 노출되던 문제
+- skylife-guide/TPS에 있던 동일한 `<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,...">` (kt skylife 빨간 로고 SVG)를 6개 파일 `<title>` 다음 줄에 그대로 추가
+- 커밋: `b79296e` — kt skylife 로고 favicon 추가 (skylife-mobile-faq)
+- 6개 프로젝트 전체 git push 완료. skylife-inquiry는 Vercel 수동 배포 필요해 `npx vercel deploy --prod` 추가 실행
