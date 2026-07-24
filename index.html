@@ -771,21 +771,41 @@
     return SYNONYM_MAP[clean] || clean;
   }
 
-  function loadStats() {
-    try { return JSON.parse(localStorage.getItem('faq_search_stats') || '{}'); } catch { return {}; }
+  const STATS_API = 'https://skylife-mobile-faq-um3h.vercel.app/api/stats';
+  let _lastRanking = [];
+
+  async function fetchRanking() {
+    try {
+      const res = await fetch(STATS_API);
+      const data = await res.json();
+      _lastRanking = Array.isArray(data.ranking) ? data.ranking : [];
+    } catch {
+      // 네트워크 오류 시 마지막으로 받아온 랭킹 유지
+    }
+    renderRankingPanel();
   }
-  function saveStats(s) { localStorage.setItem('faq_search_stats', JSON.stringify(s)); }
+
+  async function bumpKeyword(kw) {
+    try {
+      const res = await fetch(STATS_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ kw }),
+      });
+      const data = await res.json();
+      _lastRanking = Array.isArray(data.ranking) ? data.ranking : _lastRanking;
+    } catch {
+      // 실패해도 UI는 유지, 다음 로드 시 재동기화
+    }
+    renderRankingPanel();
+  }
 
   let _rankTimer = null;
   function recordSearch(kw) {
     if (!kw || kw.length < 2) return;
     clearTimeout(_rankTimer);
     _rankTimer = setTimeout(() => {
-      const key = normalizeKeyword(kw);
-      const stats = loadStats();
-      stats[key] = (stats[key] || 0) + 1;
-      saveStats(stats);
-      renderRankingPanel();
+      bumpKeyword(normalizeKeyword(kw));
     }, 800);
   }
 
@@ -793,16 +813,12 @@
     // 제목 첫 단어로 정규화 시도, 매핑 없으면 그대로 사용
     const firstWord = title.split(/[\s\-\/\(]+/)[0].toLowerCase();
     const key = SYNONYM_MAP[firstWord] || normalizeKeyword(firstWord) || firstWord;
-    const stats = loadStats();
-    stats[key] = (stats[key] || 0) + 1;
-    saveStats(stats);
-    renderRankingPanel();
+    bumpKeyword(key);
   }
 
   function renderRankingPanel() {
     const panel = document.getElementById('rankingPanel');
-    const stats = loadStats();
-    const sorted = Object.entries(stats).sort((a, b) => b[1] - a[1]).slice(0, 10);
+    const sorted = _lastRanking.map(r => [r.kw, r.count]).slice(0, 10);
     const MEDALS = ['🥇', '🥈', '🥉'];
     const RANK_CLS = ['top1', 'top2', 'top3'];
 
@@ -831,8 +847,21 @@
     });
   }
 
-  function resetStats() {
-    if (confirm('검색 기록을 초기화할까요?')) { localStorage.removeItem('faq_search_stats'); renderRankingPanel(); }
+  async function resetStats() {
+    const key = prompt('관리자 암호를 입력하세요.');
+    if (key === null) return;
+    try {
+      const res = await fetch(STATS_API, {
+        method: 'DELETE',
+        headers: { 'X-Admin-Key': key },
+      });
+      if (res.status === 403) { alert('암호가 올바르지 않습니다.'); return; }
+      const data = await res.json();
+      _lastRanking = Array.isArray(data.ranking) ? data.ranking : [];
+      renderRankingPanel();
+    } catch {
+      alert('초기화 중 오류가 발생했습니다.');
+    }
   }
   function searchByRank(kw) {
     const input = document.getElementById('searchInput');
@@ -851,7 +880,7 @@
       buildTabs();
       buildFraudList();
       render();
-      renderRankingPanel();
+      fetchRanking();
     } catch (err) {
       document.getElementById('faqList').innerHTML = `
         <div style="text-align:center;padding:60px 20px;">
