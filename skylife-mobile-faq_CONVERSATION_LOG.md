@@ -57,3 +57,25 @@
 - skylife-guide/TPS에 있던 동일한 `<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,...">` (kt skylife 빨간 로고 SVG)를 6개 파일 `<title>` 다음 줄에 그대로 추가
 - 커밋: `b79296e` — kt skylife 로고 favicon 추가 (skylife-mobile-faq)
 - 6개 프로젝트 전체 git push 완료. skylife-inquiry는 Vercel 수동 배포 필요해 `npx vercel deploy --prod` 추가 실행
+
+---
+
+## 2026-07-24 업데이트 — 부정가입장지 조치 내역 추가 + 인기검색어 전체집계 전환 + FAQ 2건 추가
+
+### FRAUD_DATA(부정가입장지 조치 내역) 3건 추가
+- `2026.07.07 / 과기부` — 안면인증 전면 도입 (안면인증 3회 실패시 스킵 가능)
+- `2026.08.04 / KAIT` — 외국인 180일이내 1회선만 개통 가능 (외국인등록증, 여권등 모두 공통사항)
+- note 필드에 `※`를 직접 넣었다가 렌더링 시 `index.html`이 자동으로 `※ `를 붙이는 걸 몰라 중복 발생 → note에서 `※` 제거해서 수정 (커밋 `1b53a73`)
+
+### 인기검색어 TOP10: localStorage(브라우저별) → 전체 접속자 공통 집계로 전환
+- 기존 방식은 사용자마다 랭킹이 다르게 보이는 문제가 있었음 (브라우저별 로컬 저장)
+- Vercel Marketplace로 **Upstash Redis** 프로비저닝, `skylife-mobile-faq-um3h` Vercel 프로젝트에 연동
+- `api/stats.js` 서버리스 함수 신규 추가 (GET 조회 / POST 카운트 증가 / DELETE 초기화, Redis sorted set 사용)
+- `index.html`의 `STATS_API`가 `https://skylife-mobile-faq-um3h.vercel.app/api/stats` 절대 URL을 호출 (GitHub Pages는 정적 사이트라 Vercel API를 cross-origin으로 호출, CORS `*` 허용)
+- "초기화" 버튼은 전체 데이터 삭제라 관리자 암호(`X-Admin-Key` 헤더, env var `ADMIN_RESET_KEY`) 확인 후에만 동작하도록 보호 추가
+- 관리자 초기화 암호는 메모리 `reference_skylife_faq_ranking.md`에 기록
+- 커밋: `3acaaca`
+
+### FAQ 항목 추가/수정
+- "외국인 가입 한도" 항목 최상단에 `[2026.08.04 시행/KAIT] 외국인 180일이내 1회선만 개통 가능` 규제 내용 반영 (커밋 `93f9d03`)
+- "유심" 카테고리에 "듀얼심 명의불일치 정지" 항목 신규 추가 — 1대 단말기 2명의자 회선 인식 시 규제기관 정지 처리 로직 + eSIM 전환 시 KAIT 정보제공 미동의로 인한 오탐 케이스 안내 (커밋 `208fd4e`)
