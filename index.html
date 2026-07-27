@@ -529,11 +529,9 @@
   var sb = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { storage: window.sessionStorage } });
   var AUTH_EMAIL_DOMAIN = '@skylife-agent.local';
   var USERNAME_RE = /^[a-zA-Z0-9_-]{4,20}$/;
-  var SESSION_FLAG = 'skylife_sso_ok';
 
   function unlock(){
     document.getElementById('lock-overlay').classList.add('hidden');
-    sessionStorage.setItem(SESSION_FLAG, '1');
   }
   function showLoginForm(){
     document.getElementById('lock-loading').style.display = 'none';
@@ -573,10 +571,6 @@
   };
 
   async function init(){
-    if(sessionStorage.getItem(SESSION_FLAG) === '1'){
-      document.getElementById('lock-overlay').classList.add('hidden');
-      return;
-    }
     var hash = location.hash;
     if(hash && hash.indexOf('sso=') !== -1){
       var token = decodeURIComponent(hash.split('sso=')[1].split('&')[0]);
@@ -585,9 +579,14 @@
       var userRes = await tokenClient.auth.getUser(token);
       if(!userRes.error && userRes.data.user){
         await checkApprovedAndUnlock(userRes.data.user.id, tokenClient, false);
-      } else {
-        showLoginForm();
+        return;
       }
+    }
+    // SSO 토큰이 없거나 만료된 경우, 기존 로그인 세션이 남아있는지 서버에 매번 재확인한다.
+    // (탭 내 캐시 플래그로 이 확인을 건너뛰면 관리자가 계정을 승인 취소해도 즉시 반영되지 않는 문제가 있었음)
+    var sessionRes = await sb.auth.getSession();
+    if(sessionRes.data.session){
+      await checkApprovedAndUnlock(sessionRes.data.session.user.id, sb, true);
     } else {
       showLoginForm();
     }
