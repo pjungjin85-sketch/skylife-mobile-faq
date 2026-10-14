@@ -196,7 +196,7 @@ body{background:var(--bg2);}
   .tabs::-webkit-scrollbar{display:none;}
   .tab{
     width:auto;flex-shrink:0;padding:8px 14px;
-    border:1px solid var(--border);border-radius:var(--r-pill);
+    border:1px solid var(--border);border-radius:var(--r-md);
     font-size:var(--t-xs);font-weight:600;white-space:nowrap;
   }
   .tab.active{border-color:var(--black);}
