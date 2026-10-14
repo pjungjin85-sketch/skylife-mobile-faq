@@ -1,0 +1,207 @@
+@charset "UTF-8";
+/* ============================================================
+   skylife-mobile-faq — 고객 응대 FAQ
+   공통 토큰·컴포넌트는 base.css. 이 파일은 이 페이지 전용.
+   ============================================================ */
+
+:root{
+  --sidebar-w:210px;
+  /* 기존 마크업이 쓰던 이름 유지 */
+  --text:var(--dark);
+  --sub:var(--mid);
+}
+body{background:var(--bg2);}
+
+.header-inner{max-width:var(--wrap);}
+.guide-home-btn{
+  display:inline-flex;align-items:center;gap:6px;margin-left:auto;
+  padding:7px 13px;border:1px solid var(--border);border-radius:var(--r-md);
+  font-size:var(--t-xs);font-weight:600;color:var(--dark);background:var(--bg);
+  text-decoration:none;white-space:nowrap;flex-shrink:0;
+  transition:border-color var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease);
+}
+.guide-home-btn svg{width:14px;height:14px;color:var(--light);}
+.guide-home-btn:hover{border-color:var(--light);background:var(--bg2);}
+.guide-home-btn:hover svg{color:var(--black);}
+
+/* ============================================================
+   레이아웃 — 사이드바 / 본문 / 인기검색어
+   ============================================================ */
+.layout{
+  max-width:var(--wrap);margin:0 auto;
+  padding:var(--s-5) var(--s-5) var(--s-9);
+  display:flex;gap:var(--s-5);align-items:flex-start;
+}
+.sidebar{width:var(--sidebar-w);flex-shrink:0;position:sticky;top:76px;}
+.sidebar-title{
+  font-size:var(--t-xs);font-weight:600;color:var(--light);
+  padding:0 4px var(--s-2);border-bottom:1px solid var(--border);margin-bottom:var(--s-2);
+}
+.main{flex:1;min-width:0;}
+
+/* 카테고리 탭 */
+.tabs{display:flex;flex-direction:column;gap:2px;}
+.tab{
+  width:100%;text-align:left;padding:9px 12px;
+  border:none;border-radius:var(--r-md);background:transparent;
+  font-size:var(--t-sm);font-weight:500;color:var(--dark);cursor:pointer;
+  transition:background var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease);
+}
+.tab:hover{background:var(--bg2);}
+.tab.active{background:var(--black);color:#fff;font-weight:600;}
+.tab.fraud-tab{color:var(--warn);font-weight:600;}
+.tab.fraud-tab:hover:not(.active){background:var(--warn-light);}
+.tab.fraud-tab.active{background:var(--warn);color:#fff;}
+
+/* ============================================================
+   검색 · FAQ 아코디언
+   ============================================================ */
+.search-wrap{position:relative;margin-bottom:var(--s-4);}
+.search-wrap>svg{
+  position:absolute;left:15px;top:50%;transform:translateY(-50%);
+  width:17px;height:17px;color:var(--light);pointer-events:none;
+}
+.search-wrap input{
+  width:100%;padding:13px 16px 13px 42px;
+  border:1px solid var(--border);border-radius:var(--r-md);
+  font-size:var(--t-body);outline:none;background:var(--bg);color:var(--black);
+  transition:border-color var(--dur-fast) var(--ease);
+}
+.search-wrap input:focus{border-color:var(--black);}
+.search-wrap input::placeholder{color:var(--light);}
+
+.faq-list{display:flex;flex-direction:column;gap:var(--s-2);}
+.faq-item{
+  background:var(--bg);border:1px solid var(--border);border-radius:var(--r-md);
+  overflow:hidden;transition:border-color var(--dur-fast) var(--ease);
+}
+.faq-item:hover{border-color:#D4D4D4;}
+.faq-item.open{border-color:var(--black);}
+
+.faq-question{
+  width:100%;background:none;border:none;text-align:left;
+  padding:15px var(--s-4);
+  font-size:var(--t-body);font-weight:600;color:var(--black);cursor:pointer;
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  letter-spacing:-.02em;
+}
+.faq-question .q-badge{
+  color:var(--light);font-size:var(--t-sm);font-weight:700;flex-shrink:0;
+}
+.faq-item.open .q-badge{color:var(--red);}
+.faq-question .q-text{flex:1;line-height:1.5;}
+.faq-question .arrow{
+  flex-shrink:0;color:var(--light);line-height:0;
+  transition:transform var(--dur) var(--ease),color var(--dur-fast) var(--ease);
+}
+.faq-question .arrow svg{width:17px;height:17px;}
+.faq-item.open .arrow{transform:rotate(180deg);color:var(--black);}
+
+.faq-answer{
+  display:none;padding:var(--s-3) var(--s-4) var(--s-4);
+  font-size:var(--t-sm);color:var(--mid);line-height:1.85;
+  border-top:1px solid var(--border);
+  white-space:pre-wrap;
+}
+.faq-item.open .faq-answer{display:block;}
+
+.no-result{
+  display:none;text-align:center;padding:var(--s-8) var(--s-5);
+  color:var(--mid);font-size:var(--t-body);
+}
+.no-result svg{width:38px;height:38px;color:var(--border);margin:0 auto var(--s-3);}
+
+/* ============================================================
+   인기 검색어
+   ============================================================ */
+.ranking-aside{
+  width:205px;flex-shrink:0;position:sticky;top:76px;
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:var(--r-md);overflow:hidden;
+}
+.rp-header{
+  padding:11px 13px 9px;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;gap:var(--s-2);
+}
+.rp-header h3{font-size:var(--t-xs);font-weight:700;color:var(--black);}
+.rp-reset{
+  background:none;border:none;cursor:pointer;
+  font-size:11px;color:var(--light);padding:2px 4px;
+}
+.rp-reset:hover{color:var(--black);}
+.rank-list{padding:var(--s-1) 0 6px;}
+.rank-item{padding:5px 13px 0;}
+.rank-top{display:flex;align-items:center;gap:7px;margin-bottom:4px;}
+.rank-num{
+  width:18px;font-size:11px;font-weight:700;color:var(--light);
+  text-align:center;flex-shrink:0;line-height:1;font-variant-numeric:tabular-nums;
+}
+.rank-num.top1,.rank-num.top2,.rank-num.top3{color:var(--black);font-size:12px;}
+.rank-kw{
+  flex:1;min-width:0;font-size:var(--t-xs);color:var(--dark);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.rank-cnt{font-size:11px;color:var(--light);flex-shrink:0;font-variant-numeric:tabular-nums;}
+.rank-bar-wrap{height:3px;background:var(--bg2);border-radius:2px;overflow:hidden;margin-left:25px;}
+.rank-bar{height:100%;background:var(--black);border-radius:2px;}
+.rp-empty{padding:var(--s-4) 13px;font-size:11px;color:var(--light);text-align:center;line-height:1.6;}
+
+/* ============================================================
+   보이스피싱 안내
+   ============================================================ */
+.fraud-section{display:none;}
+.fraud-section.show{display:block;}
+.fraud-header{
+  display:flex;align-items:center;gap:var(--s-2);
+  padding-bottom:var(--s-3);margin-bottom:var(--s-4);
+  border-bottom:1px solid var(--border);
+}
+.fraud-header svg{width:18px;height:18px;color:var(--warn);}
+.fraud-header h2{font-size:var(--t-h3);font-weight:700;color:var(--black);letter-spacing:-.025em;}
+.fraud-list{display:flex;flex-direction:column;gap:var(--s-2);}
+.fraud-item{
+  background:var(--bg);border:1px solid var(--border);border-radius:var(--r-md);
+  padding:var(--s-4);
+}
+.fraud-org{font-size:var(--t-body);font-weight:700;color:var(--black);letter-spacing:-.02em;}
+.fraud-date{font-size:var(--t-xs);color:var(--light);margin-top:2px;}
+.fraud-body{font-size:var(--t-sm);color:var(--mid);line-height:1.8;margin-top:var(--s-2);white-space:pre-wrap;}
+.fraud-content{font-size:var(--t-sm);color:var(--dark);line-height:1.8;}
+.fraud-note{
+  background:var(--warn-light);border:1px solid var(--warn-border);
+  border-radius:var(--r-md);padding:var(--s-3) var(--s-4);
+  font-size:var(--t-sm);color:var(--black);line-height:1.7;margin-top:var(--s-4);
+}
+
+/* 로그인 보조 */
+.login-area{display:none;}
+.login-area.show{display:block;}
+.lock-hint{font-size:var(--t-xs);color:var(--light);text-align:center;margin-top:var(--s-4);line-height:1.6;}
+#login-form{display:flex;flex-direction:column;gap:var(--s-3);text-align:left;}
+
+/* ============================================================
+   태블릿 · 모바일
+   ============================================================ */
+@media(max-width:1024px){
+  .ranking-aside{display:none;}
+}
+@media(max-width:768px){
+  .layout{flex-direction:column;gap:var(--s-4);padding:var(--s-4) var(--s-4) 60px;}
+  .sidebar{width:100%;position:static;}
+  .sidebar-title{display:none;}
+  .tabs{
+    flex-direction:row;flex-wrap:nowrap;gap:6px;
+    overflow-x:auto;scrollbar-width:none;padding-bottom:2px;
+  }
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{
+    width:auto;flex-shrink:0;padding:8px 14px;
+    border:1px solid var(--border);border-radius:var(--r-pill);
+    font-size:var(--t-xs);font-weight:600;white-space:nowrap;
+  }
+  .tab.active{border-color:var(--black);}
+  .tab.fraud-tab{border-color:var(--warn-border);}
+  .tab.fraud-tab.active{border-color:var(--warn);}
+  .faq-question{padding:13px var(--s-3);font-size:var(--t-sm);}
+  .faq-answer{padding:var(--s-2) var(--s-3) var(--s-3);}
+}

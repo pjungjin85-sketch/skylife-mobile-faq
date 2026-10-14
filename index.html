@@ -10,478 +10,21 @@
   <meta http-equiv="Expires" content="0">
   <title>모바일 FAQ — kt skylife</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0id2hpdGUiLz48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjciIGZpbGw9IiNFNjAwMTIiLz48dGV4dCB4PSI1MCIgeT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCBCbGFjayxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iOTAwIiBmb250LXNpemU9IjMwIiBmaWxsPSIjMUExQTFBIj5rdDwvdGV4dD48dGV4dCB4PSI1MCIgeT0iODAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCBCbGFjayxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iOTAwIiBmb250LXNpemU9IjIwIiBmaWxsPSIjRTYwMDEyIj5za3lsaWZlPC90ZXh0Pjwvc3ZnPg==">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" integrity="sha384-2nNKoOPayicGa+aRguOQuiZP+RqQ4G3jalfDeOgftkKD7zBM2gJXTwcFqCZltdv0" crossorigin="anonymous">
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js" integrity="sha384-0w2KAL2YHP6wKOkUDzkCDGgVvfmHnj02DHeQ6XcHOgTfFsGyonKOpShMH1x6nk9o" crossorigin="anonymous"></script>
-  <style>
-    :root {
-      --red: #E60012;
-      --red2: #CC0010;
-      --red-light: #FFF5F5;
-      --red-border: #FFCCCC;
-      --black: #1A1A1A;
-      --dark: #333333;
-      --mid: #666666;
-      --light: #999999;
-      --bg: #FFFFFF;
-      --bg2: #F7F7F7;
-      --bg3: #FAFAFA;
-      --border: #E8E8E8;
-      --shadow: 0 2px 12px rgba(0,0,0,0.08);
-      --shadow-hover: 0 8px 28px rgba(0,0,0,0.14);
-      --text: #333333;
-      --sub: #666666;
-      --sidebar-w: 200px;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Noto Sans KR', sans-serif;
-      background: var(--bg2);
-      color: var(--dark);
-      min-height: 100vh;
-    }
-
-    /* ── 헤더 ── */
-    header {
-      background: var(--bg);
-      border-top: 3px solid var(--red);
-      border-bottom: 1px solid var(--border);
-      padding: 0 20px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: var(--shadow);
-    }
-    .header-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      height: 56px;
-      gap: 12px;
-    }
-    .logo-text {
-      font-size: 18px;
-      font-weight: 900;
-      color: var(--black);
-      letter-spacing: -.02em;
-      white-space: nowrap;
-    }
-    .logo-text span { color: var(--red); }
-    .header-badge {
-      background: var(--red);
-      color: #fff;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 3px;
-      letter-spacing: .04em;
-      white-space: nowrap;
-    }
-    .header-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--dark);
-    }
-    .guide-home-btn {
-      margin-left: auto;
-      padding: 6px 14px;
-      border: none;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #fff;
-      background: #22C55E;
-      text-decoration: none;
-      white-space: nowrap;
-      font-family: inherit;
-      flex-shrink: 0;
-    }
-    .guide-home-btn:hover {
-      background: #16A34A;
-    }
-
-    /* ── PC 레이아웃 컨테이너 ── */
-    .layout {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 20px 20px 80px;
-      display: flex;
-      gap: 20px;
-      align-items: flex-start;
-    }
-
-    /* ── PC 사이드바 (카테고리) ── */
-    .sidebar {
-      width: var(--sidebar-w);
-      flex-shrink: 0;
-      position: sticky;
-      top: 68px;
-    }
-    .sidebar-title {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--sub);
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      padding: 0 4px 8px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 8px;
-    }
-    .tabs {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .tab {
-      width: 100%;
-      text-align: left;
-      padding: 9px 12px;
-      border-radius: 8px;
-      border: none;
-      background: transparent;
-      font-size: 14px;
-      cursor: pointer;
-      color: var(--text);
-      transition: all 0.15s;
-    }
-    .tab:hover { background: var(--border); }
-    .tab.active {
-      background: var(--red);
-      color: #fff;
-      font-weight: 600;
-    }
-    .tab.fraud-tab {
-      color: #b45309;
-      font-weight: 600;
-    }
-    .tab.fraud-tab.active {
-      background: #b45309;
-      color: #fff;
-    }
-    .tab.fraud-tab:hover:not(.active) {
-      background: #fef3c7;
-    }
-
-    /* ── 메인 콘텐츠 ── */
-    .main {
-      flex: 1;
-      min-width: 0;
-    }
-
-    /* 검색창 */
-    .search-wrap {
-      margin-bottom: 16px;
-    }
-    .search-wrap input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      font-size: 15px;
-      outline: none;
-      background: #fff;
-      transition: border-color 0.2s;
-    }
-    .search-wrap input:focus {
-      border-color: var(--red);
-    }
-
-    /* FAQ 리스트 */
-    .faq-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .faq-item {
-      background: #fff;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      overflow: hidden;
-      transition: box-shadow 0.15s;
-    }
-    .faq-item:hover {
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    }
-
-    .faq-question {
-      width: 100%;
-      background: none;
-      border: none;
-      text-align: left;
-      padding: 15px 16px;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-    }
-    .faq-question .q-badge {
-      color: var(--red);
-      font-size: 16px;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-    .faq-question .q-text {
-      flex: 1;
-      line-height: 1.4;
-    }
-    .faq-question .arrow {
-      flex-shrink: 0;
-      font-size: 12px;
-      color: var(--sub);
-      transition: transform 0.2s;
-    }
-    .faq-item.open .arrow { transform: rotate(180deg); }
-
-    .faq-answer {
-      display: none;
-      padding: 12px 16px 15px;
-      font-size: 13px;
-      color: var(--sub);
-      line-height: 1.8;
-      border-top: 1px solid var(--border);
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-    .faq-item.open .faq-answer { display: block; }
-
-    /* 검색 결과 없음 */
-    .no-result {
-      display: none;
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--sub);
-      font-size: 14px;
-    }
-
-    /* 하이라이트 */
-    mark {
-      background: #fff3cd;
-      color: inherit;
-      border-radius: 2px;
-      padding: 0 1px;
-    }
-
-    /* ── 인기 검색어 사이드 차트 ── */
-    .ranking-aside {
-      width: 195px;
-      flex-shrink: 0;
-      position: sticky;
-      top: 68px;
-      background: #fff;
-      border: 1.5px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    .rp-header {
-      padding: 11px 13px 9px;
-      border-bottom: 1px solid var(--border);
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .rp-header h3 { font-size: 12px; font-weight: 700; color: var(--dark); }
-    .rp-reset { font-size: 10px; color: var(--light); background: none; border: none; cursor: pointer; font-family: inherit; padding: 0; }
-    .rp-reset:hover { color: var(--red); }
-    .rank-list { padding: 4px 0 6px; }
-    .rank-item { padding: 5px 12px 0; }
-    .rank-top { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
-    .rank-num { width: 18px; font-size: 11px; font-weight: 700; color: var(--light); text-align: center; flex-shrink: 0; line-height: 1; }
-    .rank-num.top1 { font-size: 15px; }
-    .rank-num.top2 { font-size: 14px; }
-    .rank-num.top3 { font-size: 13px; }
-    .rank-kw {
-      flex: 1; min-width: 0;
-      font-size: 12px; font-weight: 600; color: var(--dark);
-      cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .rank-kw:hover { color: var(--red); text-decoration: underline; }
-    .rank-cnt { font-size: 10px; color: var(--light); flex-shrink: 0; }
-    .rank-bar-wrap { height: 4px; background: var(--bg2); border-radius: 2px; margin-bottom: 5px; overflow: hidden; }
-    .rank-bar { height: 100%; border-radius: 2px; transition: width 0.55s ease; }
-    .rank-bar.top1 { background: #F59E0B; }
-    .rank-bar.top2 { background: #9CA3AF; }
-    .rank-bar.top3 { background: #B45309; }
-    .rank-bar.other { background: var(--red); opacity: 0.5; }
-    .rp-empty { padding: 22px 13px; text-align: center; font-size: 11px; color: var(--light); line-height: 1.7; }
-
-    /* ── 부정가입방지 섹션 ── */
-    .fraud-section { display: none; }
-    .fraud-section.active { display: block; }
-
-    .fraud-header {
-      background: #fff;
-      border-radius: 12px;
-      border: 1px solid #fde68a;
-      padding: 16px 20px;
-      margin-bottom: 16px;
-    }
-    .fraud-header h2 {
-      font-size: 15px;
-      font-weight: 700;
-      color: #92400e;
-      margin-bottom: 4px;
-    }
-    .fraud-header p {
-      font-size: 12px;
-      color: #b45309;
-    }
-
-    .fraud-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .fraud-item {
-      background: #fff;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      padding: 14px 16px;
-      display: grid;
-      grid-template-columns: 90px 1fr;
-      gap: 8px 14px;
-      align-items: start;
-    }
-    .fraud-item:hover {
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    }
-
-    .fraud-date {
-      font-size: 12px;
-      font-weight: 700;
-      color: #b45309;
-      padding-top: 1px;
-    }
-    .fraud-org {
-      font-size: 11px;
-      color: var(--sub);
-      margin-top: 3px;
-      grid-column: 1;
-    }
-    .fraud-body {
-      grid-column: 2;
-      grid-row: 1 / 3;
-    }
-    .fraud-content {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-      line-height: 1.5;
-      margin-bottom: 4px;
-    }
-    .fraud-note {
-      font-size: 12px;
-      color: var(--sub);
-    }
-
-    /* 푸터 */
-    footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #fff;
-      border-top: 1px solid var(--border);
-      text-align: center;
-      padding: 10px;
-      font-size: 11px;
-      color: var(--sub);
-      z-index: 50;
-    }
-
-    /* ── 중간 화면: 랭킹 패널 숨김 ── */
-    @media (max-width: 900px) {
-      .ranking-aside { display: none; }
-    }
-
-    /* ── 모바일 (768px 이하) ── */
-    @media (max-width: 768px) {
-      .guide-home-btn {
-        padding: 5px 8px;
-        font-size: 11px;
-      }
-      .layout {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 0 0 80px;
-        gap: 0;
-      }
-
-      .sidebar {
-        width: 100%;
-        position: static;
-        padding: 8px 0 0;
-      }
-      .sidebar-title { display: none; }
-
-      .tabs {
-        flex-direction: row;
-        gap: 8px;
-        padding: 8px 16px 12px;
-        overflow-x: auto;
-        scrollbar-width: none;
-      }
-      .tabs::-webkit-scrollbar { display: none; }
-
-      .tab {
-        flex-shrink: 0;
-        width: auto;
-        padding: 6px 14px;
-        border-radius: 20px;
-        border: 1.5px solid var(--border);
-        background: #fff;
-        font-size: 13px;
-        color: var(--sub);
-      }
-      .tab:hover { background: #fff; }
-      .tab.active {
-        background: var(--red);
-        border-color: var(--red);
-        color: #fff;
-      }
-      .tab.fraud-tab {
-        border-color: #fde68a;
-        color: #b45309;
-      }
-      .tab.fraud-tab.active {
-        background: #b45309;
-        border-color: #b45309;
-        color: #fff;
-      }
-      .tab.fraud-tab:hover:not(.active) {
-        background: #fef3c7;
-      }
-
-      .main {
-        padding: 0 16px;
-        width: 100%;
-      }
-
-      .search-wrap {
-        padding-top: 4px;
-        margin-bottom: 12px;
-      }
-
-      .fraud-item {
-        grid-template-columns: 1fr;
-      }
-      .fraud-body {
-        grid-column: 1;
-        grid-row: auto;
-      }
-      .fraud-org {
-        grid-column: 1;
-        grid-row: auto;
-      }
-    }
-  </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7.5"/><path d="m16.5 16.5 4 4"/></symbol>
+<symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m0 0 6-6m-6 6 6 6"/></symbol>
+<symbol id="i-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9.5 6 6 6-6"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8 4.5 6v6c0 4.6 3.1 8 7.5 9.2 4.4-1.2 7.5-4.6 7.5-9.2V6z"/><path d="M12 8.5v4M12 15.8h.01"/></symbol>
+<symbol id="i-warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 2.6 17.2A2 2 0 0 0 4.3 20.2h15.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4M12 17h.01"/></symbol>
+</defs></svg>
+
 <div id="lock-overlay">
   <div class="lock-box">
     <div class="lock-logo">kt <span>skylife</span></div>
@@ -498,29 +41,6 @@
     </div>
   </div>
 </div>
-<style>
-#lock-overlay{position:fixed;inset:0;z-index:9999;background:var(--bg2);display:flex;align-items:center;justify-content:center;padding:20px;}
-#lock-overlay.hidden{display:none;}
-.lock-box{background:var(--bg);border:1px solid var(--border);border-top:3px solid var(--red);border-radius:16px;padding:40px 36px 32px;width:100%;max-width:380px;box-shadow:var(--shadow);text-align:center;}
-.lock-logo{font-size:20px;font-weight:900;color:var(--black);margin-bottom:4px;}
-.lock-logo span{color:var(--red);}
-.lock-sub{font-size:12px;color:var(--light);margin-bottom:24px;line-height:1.5;}
-.lock-loading{display:flex;justify-content:center;padding:24px 0;}
-.spinner{width:26px;height:26px;border:3px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:lock-spin .7s linear infinite;}
-@keyframes lock-spin{to{transform:rotate(360deg);}}
-.login-area{display:none;}
-.login-area.show{display:block;}
-#login-form{display:flex;flex-direction:column;gap:10px;text-align:left;}
-.auth-field label{font-size:11px;font-weight:700;color:var(--dark);margin-bottom:4px;display:block;}
-.auth-field input{width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;outline:none;color:var(--black);transition:border-color .15s;}
-.auth-field input:focus{border-color:var(--red);}
-.auth-submit-btn{width:100%;padding:13px;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer;margin-top:4px;transition:background .15s;}
-.auth-submit-btn:hover{background:var(--red2);}
-.auth-submit-btn:disabled{background:var(--light);cursor:not-allowed;}
-.auth-msg{font-size:12px;margin-top:6px;min-height:16px;text-align:center;}
-.auth-msg.error{color:var(--red);}
-.lock-hint{font-size:11px;color:var(--light);margin-top:18px;line-height:1.5;}
-</style>
 <script>
 (function(){
   var SUPABASE_URL = 'https://qvzlwhwxspmofrwdvgdd.supabase.co';
@@ -599,9 +119,9 @@
 <header>
   <div class="header-inner">
     <span class="logo-text">kt <span>skylife</span></span>
-    <span class="header-badge">MOBILE</span>
+    <span class="header-badge">대리점 전용</span>
     <span class="header-title">모바일 FAQ</span>
-    <a href="https://skylife-guide-jyac.vercel.app/" class="guide-home-btn">돌아가기</a>
+    <a href="https://skylife-guide-jyac.vercel.app/" class="guide-home-btn"><svg><use href="#i-back"></use></svg>가이드로</a>
   </div>
 </header>
 
@@ -615,14 +135,16 @@
   <!-- 메인 콘텐츠 -->
   <div class="main">
     <div class="search-wrap" id="searchWrap">
-      <input type="text" id="searchInput" placeholder="질문 검색..." />
+      <svg><use href="#i-search"></use></svg>
+      <input type="text" id="searchInput" placeholder="질문 검색" />
     </div>
     <div class="faq-list" id="faqList"></div>
-    <div class="no-result" id="noResult">검색 결과가 없습니다.</div>
+    <div class="no-result" id="noResult"><svg><use href="#i-search"></use></svg>검색 결과가 없습니다</div>
 
     <!-- 부정가입방지 섹션 -->
     <div class="fraud-section" id="fraudSection">
       <div class="fraud-header">
+        <svg><use href="#i-shield"></use></svg>
         <h2>부정가입방지 조치내역</h2>
         <p>시행일 순 정렬 — 전체 적용 완료</p>
       </div>
@@ -738,7 +260,7 @@
         <button type="button" class="faq-question">
           <span class="q-badge">Q</span>
           <span class="q-text">${highlight(d.q, keyword)}</span>
-          <span class="arrow">▼</span>
+          <span class="arrow"><svg><use href="#i-chevron"></use></svg></span>
         </button>
         <div class="faq-answer">${highlight(d.a, keyword)}</div>
       </div>
@@ -840,7 +362,7 @@
   function renderRankingPanel() {
     const panel = document.getElementById('rankingPanel');
     const sorted = _lastRanking.map(r => [r.kw, r.count]).slice(0, 10);
-    const MEDALS = ['🥇', '🥈', '🥉'];
+    /* 메달 이모지 대신 순위 숫자를 그대로 쓰고, 상위 3개는 CSS로 강조한다 */
     const RANK_CLS = ['top1', 'top2', 'top3'];
 
     let inner = `<div class="rp-header"><h3>인기 검색어 TOP 10</h3><button class="rp-reset" onclick="resetStats()">초기화</button></div>`;
@@ -850,7 +372,7 @@
       const max = sorted[0][1];
       inner += `<div class="rank-list">${sorted.map(([kw, cnt], i) => {
         const cls = i < 3 ? RANK_CLS[i] : 'other';
-        const num = i < 3 ? MEDALS[i] : (i + 1);
+        const num = i + 1;
         const pct = Math.round(cnt / max * 100);
         return `<div class="rank-item">
           <div class="rank-top">
@@ -905,7 +427,7 @@
     } catch (err) {
       document.getElementById('faqList').innerHTML = `
         <div style="text-align:center;padding:60px 20px;">
-          <div style="font-size:36px;margin-bottom:12px;">⚠️</div>
+          <div style="display:flex;justify-content:center;margin-bottom:12px;"><svg style="width:36px;height:36px;color:var(--light)"><use href="#i-warn"></use></svg></div>
           <div style="font-size:14px;font-weight:700;margin-bottom:8px;">데이터를 불러오지 못했습니다</div>
           <div style="font-size:12px;color:#999;margin-bottom:16px;">${err.message.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}</div>
           <button onclick="loadData()" style="background:#E60012;color:#fff;border:none;padding:8px 20px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">다시 시도</button>
