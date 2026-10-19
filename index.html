@@ -141,6 +141,7 @@
 
   <!-- 메인 콘텐츠 -->
   <div class="main">
+    <div class="base-month" id="baseMonthLabel"></div>
     <div class="search-wrap" id="searchWrap">
       <svg><use href="#i-search"></use></svg>
       <input type="text" id="searchInput" placeholder="질문 검색" />
@@ -420,11 +421,26 @@
   }
   // ────────────────────────────────────────────────────────────────────────
 
+  // 월별 키("YYYY-MM") 중 이번 달 이하의 가장 최근 월을 고른다 (미래 월은 해당 월이 되면 자동 적용)
+  function pickActiveMonth(data){
+    const now = new Date();
+    const currentKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    const keys = Object.keys(data).filter(k => /^\d{4}-\d{2}$/.test(k)).sort();
+    if (!keys.length) throw new Error('기준월 데이터가 없습니다');
+    return keys.filter(k => k <= currentKey).pop() ?? keys[0];
+  }
+  function setBaseMonthLabel(key){
+    const [y, m] = key.split('-');
+    document.getElementById('baseMonthLabel').textContent = `${y}년 ${parseInt(m)}월 기준`;
+  }
   async function loadData() {
     try {
       const res = await fetch('data/faq.json?t=' + Date.now());
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
+      const all = await res.json();
+      const key = pickActiveMonth(all);
+      const data = all[key];
+      setBaseMonthLabel(key);
       FAQ_DATA = Array.isArray(data.FAQ_DATA) ? data.FAQ_DATA : [];
       FRAUD_DATA = Array.isArray(data.FRAUD_DATA) ? data.FRAUD_DATA : [];
       buildTabs();

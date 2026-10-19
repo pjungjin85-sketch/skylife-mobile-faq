@@ -205,3 +205,12 @@ body{background:var(--bg2);}
   .faq-question{padding:13px var(--s-3);font-size:var(--t-sm);}
   .faq-answer{padding:var(--s-2) var(--s-3) var(--s-3);}
 }
+
+/* 기준월 표시 (data/*.json 의 월별 키에서 자동 반영) */
+.base-month{
+  margin-bottom:var(--s-3);
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:var(--t-xs);font-weight:600;color:var(--mid);
+}
+.base-month::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--red);}
+.base-month:empty{display:none;}
