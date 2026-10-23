@@ -26,3 +26,8 @@
 - 새 FAQ는 `data/faq.json` 의 `FAQ_DATA` **맨 뒤에** 추가할 것 (화면은 카테고리로 묶여 보이므로 위치 무관).
   업무지원 봇 KB 의 FAQ id(faq-001…)가 순서 기반이라, 중간에 넣으면 뒤 항목 id가 전부 밀려
   봇 검색 테스트와 질문 로그의 근거 id가 틀어진다.
+
+## 관리자 등록 답변 (2026-10-23~)
+- 관리자 페이지(skylife-inquiry) '등록한 답변' 탭에서 넣은 FAQ 는 Supabase `faq_answers` 에 있고,
+  페이지가 `faq_answers_public()` 으로 불러와 faq.json 목록 **뒤에** 붙여 보여준다 (실패해도 기존 FAQ 는 그대로).
+- 업무지원 봇은 다음 날 05:00 KB 재빌드 때 같은 함수로 받아간다 (id: faq-x{DB id}).
